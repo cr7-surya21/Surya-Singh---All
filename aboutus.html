@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+  <link rel="stylesheet" href="1st Website.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <style>
+    body {
+      margin: 0;
+      line-height: 1.6;
+    }
+    .AboutUs{
+    background-color: rgba(89, 89, 89, 0.112);
+    border-bottom: 3px solid black;
+    border-radius: 10px;
+}
+    .about-section {
+      padding: 60px 10%;
+
+    }
+
+    .about-section h2 {
+      font-size: 2.8em;
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .about-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      font-size: 1.1em;
+      color: #555;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+
+    .about-card {
+      background: rgba(89, 89, 89, 0.112);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 100 rgba(0,0,0,0.05);
+    }
+    .about-card:hover {
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+      transition: all 0.3s ease;
+    }
+    .about-card h3 {
+      color: #0a74da;
+      margin-bottom: 10px;
+    }
+
+    .about-card p {
+      color: #444;
+      font-size: 1em;
+    }
+
+    .principal-message {
+      display: flex;
+      align-items: center;
+      padding: 40px;
+      border-radius: 12px;
+    }
+
+    .principal-message img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      margin-right: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .principal-message div {
+      flex: 1;
+    }
+
+    .principal-message h3 {
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .principal-message p {
+      color: #444;
+    }
+
+    @media (max-width: 900px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .principal-message {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .principal-message img {
+        margin: 0 0 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+        <header><span class="Shwetambari"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfYxtbXIUoss0zpjcbSXcGYs-iuns2dRyyHw&s" style="border-radius: 50px; width: 50px; height: 50px;" alt="Logo"> Shwetambari Public School</span>
+    <nav class="navbar"><ul>
+        <a href="1st Website.HTML"><li class="home">Home</li></a>
+        <a href="aboutus.html"><li class="AboutUs">About Us</li></a>
+        <a href="facilities.html"><li class="Facilities">Facilities</li></a>
+        <a href="approach.html"><li class="Approach">Approach</li></a>
+        <a href="contactus.html"><li class="ContactUs">Contact Us</li></a>
+    </ul></nav></header>
+  <section class="about-section">
+    <h2>About Our Institution</h2>
+    <p class="about-intro">
+      <strong>Shwetambari Public School</strong> has been a beacon of knowledge 
+      and excellence since 1995. Our aim is to nurture every child into a 
+      confident, responsible, and compassionate individual who contributes 
+      positively to society.
+    </p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Our History</h3>
+        <p>
+          Established in 1995, our school began with just 100 students 
+          and 10 teachers. Today, we proudly serve over 2000 students 
+          with state-of-the-art facilities and a strong academic foundation.
+        </p>
+      </div>
+      <div class="about-card">
+        <h3>Vision & Mission</h3>
+        <p>
+          Our vision is to empower students with knowledge and values 
+          to become global citizens. Our mission is to provide a 
+          safe, nurturing, and stimulating environment where learning 
+          is a joyful experience.
+        </p>
+      </div>
+      <div class="about-card">
+        <h3>Achievements</h3>
+        <p>
+          Over the years, our students have excelled in academics, 
+          sports, arts, and cultural activities. We have proudly 
+          produced national-level achievers and scholars.
+        </p>
+      </div>
+      <div class="about-card">
+        <h3>Facilities</h3>
+        <p>
+          Our campus includes modern classrooms, science and computer labs, 
+          a well-stocked library, sports fields, and art studios. 
+          We continuously upgrade our infrastructure to match global standards.
+        </p>
+      </div>
+    </div>
+
+    <div class="principal-message">
+      <img src="https://via.placeholder.com/200.png?text=Principal" alt="Principal Photo">
+      <div>
+        <h3>Message from the Principal</h3>
+        <p>
+          At Shwetambari Public School, we believe education is not just about 
+          textbooks but about preparing students for life. Our dedicated staff 
+          ensures that each child receives individual attention and the 
+          opportunity to discover their true potential.  
+          We look forward to guiding our students toward a bright future.
+        </p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

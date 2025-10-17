@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta Username="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms</title>
+    <style>
+        body {
+            background-color: rgb(53, 53, 53);
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .s {
+            text-align: center;
+            justify-content: center;
+            padding-top: 100px;
+            margin: 0; 
+        }
+
+        form {
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0;
+            border: 2px solid #e5e5e5;
+            padding: 50px;
+            font-size: x-large;
+            height: 425;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgb(126, 126, 126);
+            background-color:  rgb(53, 53, 53);
+        }
+        form:hover{
+            border: 2px solid rgb(60, 146, 192);
+            box-shadow: 0 0 70px rgb(60, 146, 192);
+        }
+        h1 {
+            text-align: center;
+            color: rgb(193, 193, 193);
+        }
+         input{
+            border-radius: 5px;
+            font-size: medium;
+            text-align: center;
+            background-color: rgb(93, 93, 93);
+            border: 2px solid rgb(93, 93, 93);
+            transition: 0.5s;
+         }
+         input:hover{
+           background-color:rgb(60, 146, 192);
+           border: 2px solid rgb(60, 146, 192); 
+         }
+        input:active{
+           background-color:rgb(60, 146, 192);
+           border: 2px solid rgb(60, 146, 192); 
+        }
+                 label{
+            border-radius: 5px;
+            font-size: large;
+            text-align: center;
+            color: rgb(142, 142, 142);
+            transition: 0.5s;
+         }
+         label:hover{
+           color:rgb(60, 146, 192);
+         }
+        label:active{
+           color:rgb(60, 146, 192);
+           border: 2px solid rgb(60, 146, 192);
+        }
+         select{
+           border-radius: 5px;
+           font-size: small;
+           text-align: center;
+           background-color: rgb(93, 93, 93);
+           border: 2px solid rgb(93, 93, 93);
+           transition: 0.5s;
+         }
+         select:hover{
+   background-color:rgb(60, 146, 192);
+   border: 2px solid rgb(60, 146, 192); 
+ }
+select:active{
+   background-color:rgb(60, 146, 192);
+   border: 2px solid rgb(60, 146, 192); 
+}
+        .button {
+            border: none;
+            color: rgb(0, 0, 0);
+            border-radius: 50px;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+   <header> <h1> Apply to be a member of KARAकारी</h1></header>
+        <main><div class="s"></div>
+        <center><form>
+          <label for="Username">Username:</label>
+            <input type="text" id="Username"
+                name="Username" placeholder="Username" autofocus required><br><br>
+            <label for="Password">Password:</label>
+            <input type="password" id="Password"
+                name="password" placeholder="Password"  required><br><br>
+            <label for="male">Male</label>
+            <input type="radio" id="male" name="gender" value="male" >
+            <label for="female">Female</label>
+            <input type="radio" id="female" name="gender" value="female"><br><br>
+            <label for="birthday">Birthday:</label>
+            <input type="date" id="birthday" name="birthday" required><br><br>
+            <label for="country">Country:</label>
+    <select id="country" name="country">
+        <option value="usa">USA</option>
+        <option value="canada">Canada</option>
+        <option value="uk">UK</option>
+        <option value="australia">Australia</option>
+        <option value="India">India</option>
+    </select><br><br>
+            <label for="favcolor">Select your skin color:</label>
+             <input type="color" id="favcolor" name="favcolor" value="#0000ff"><br><br>
+            <input type="checkbox" id="terms" name="terms" required>
+            <label for="terms">I agree to the terms and conditions</label><br><br>
+            <input class="button" style="background-color: rgb(125, 154, 164);" type="submit" value="Submit" required>
+        </form>
+</div></main>
+</body>
+</html>

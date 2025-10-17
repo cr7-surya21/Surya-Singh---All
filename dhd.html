@@ -1,0 +1,53 @@
+<!Doctype html>
+<html>
+    <head>
+        <title> Bachchi ho kya.</title>
+    </head>
+    <style>
+        body{
+            background-color: black;
+            height: 100vh;
+            clip-path: polygon(0% 15%, 100% 100%, 15% 0%, 85% 0%, 0 100%, 100% 15%, 100% 85%, 0 0, 85% 100%, 15% 100%, 100% 0, 0% 85%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .loading{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .load{
+            width: 50px;
+            height: 50px;
+            border: 8px solid white;
+            border-radius: 100px;
+            border-top: 8px solid rgb(25, 25, 25);
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 30px;
+            box-shadow: 0 0 40px black;
+        }
+        @keyframes spin{
+            100%{transform: rotate(360deg);}
+        }
+        .loading-font{
+            font-family: calibri;
+            color: rgb(0, 0, 0);
+            letter-spacing: 1px;
+            font-size: 50px;
+            text-shadow: 0 2px 8px black;
+            animation: pulse 1s infinite;
+        }
+         @keyframes pulse {
+     0%, 100% { opacity: 1}
+     50% { opacity: 0.6;}
+ }
+    </style>
+    <body>
+        <div class="loading">
+            <div class="load"></div>
+            <div class="loading-font">Loading...</div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https:                                      
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            background-color: black;
+            height: 100vh;
+            color: seashell;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <label for="total-number">Enter the total number:</label>
+    <input id="total-number" type="number">
+    <label for="obtained-number">Enter the obtained number:</label>
+    <input id="obtained-number" type="number">
+    <button id="calculate-button">Calculate Percentage</button>
+    <div id="result"></div>
+
+    <py-script>
+        from pyscript import document
+
+        def calculate_percentage():
+            try:
+                j = float(document.getElementById("total-number").value)
+                l = float(document.getElementById("obtained-number").value)
+                percentage = (l / j) * 100
+                document.getElementById("result").innerText = f"The percentage of given numbers is {percentage:.2f}%"
+            except ZeroDivisionError:
+                document.getElementById("result").innerText = "Cannot divide by zero!"
+            except ValueError:
+                document.getElementById("result").innerText = "Invalid input"
+
+        document.getElementById("calculate-button").addEventListener("click", calculate_percentage)
+    </py-script>
+</body>
+</html>
