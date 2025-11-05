@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    
+    <style>
+        /* Global Styles */
+        body {
+            background-color: black;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        h1 {
+            color: #88aed5;
+            text-shadow: 0 0 3px #88aed5;
+            margin-bottom: 5px;
+        }
+
+        /* Board Layout using CSS Grid */
+        #gameBoard {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            background-color: #000000;
+        }
+
+        /* Button Styling (The game cells) */
+        .cell {
+            background-color: #1e1e1e;
+            border: none;
+            font-size: 40px;
+            font-weight: bold;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            line-height: 80px;
+            text-align: center;
+            padding: 0;
+        }
+
+        .cell:hover:not(:disabled) {
+            background-color: #232323;
+        }
+        
+        .cell:active {
+            transform: scale(0.98);
+        }
+
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #383838;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #resetButton:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <p>Player **O** goes first!</p>
+    
+    <input type="hidden" value="1" id="moveCounter"> 
+    
+    <div id="gameBoard">
+        <button id="a" class="cell" onclick="game1()"></button>
+        <button id="b" class="cell" onclick="game2()"></button>
+        <button id="c" class="cell" onclick="game3()"></button>
+        <button id="d" class="cell" onclick="game4()"></button>
+        <button id="e" class="cell" onclick="game5()"></button>
+        <button id="f" class="cell" onclick="game6()"></button>
+        <button id="g" class="cell" onclick="game7()"></button>
+        <button id="h" class="cell" onclick="game8()"></button>
+        <button id="i" class="cell" onclick="game9()"></button>
+    </div>
+    
+    <button id="resetButton" onclick="resetGame()">Reset Game</button>
+
+    <script>
+        // Get references to elements
+        const x = document.getElementById('moveCounter');
+        const a = document.getElementById('a');
+        const b = document.getElementById('b');
+        const c = document.getElementById('c');
+        const d = document.getElementById('d');
+        const e = document.getElementById('e');
+        const f = document.getElementById('f');
+        const g = document.getElementById('g');
+        const h = document.getElementById('h');
+        const i = document.getElementById('i');
+
+        const allButtons = [a, b, c, d, e, f, g, h, i];
+        let gameActive = true; 
+
+        function makeMove(button) {
+            // Check if game is active or if the cell has content
+            if (!gameActive || button.textContent) {
+                return; 
+            }
+
+            let moveCount = parseInt(x.value);
+            
+            // Assign 'O' or 'X'
+            if (moveCount % 2 === 0) {
+                button.textContent = "X";
+                button.style.color = "#e74c3c"; // Red color for X
+                button.style.textShadow = "0 0 3px #e74c3c";
+            } else {
+                button.textContent = "O";
+                button.style.color = "#3498db"; // Blue color for O
+                button.style.textShadow = "0 0 3px #3498db";
+            }
+            
+            x.value = moveCount + 1;
+            
+            result();
+        }
+
+        // Consolidated move functions
+        function game1() { makeMove(a); }
+        function game2() { makeMove(b); }
+        function game3() { makeMove(c); }
+        function game4() { makeMove(d); }
+        function game5() { makeMove(e); }
+        function game6() { makeMove(f); }
+        function game7() { makeMove(g); }
+        function game8() { makeMove(h); }
+        function game9() { makeMove(i); }
+
+        function result() {
+            const getText = (cell) => cell.textContent;
+
+            const winConditions = [
+                [a, b, c], [d, e, f], [g, h, i], 
+                [a, d, g], [b, e, h], [c, f, i], 
+                [a, e, i], [g, e, c]             
+            ];
+
+            let winner = null;
+            
+            for (let condition of winConditions) {
+                const text1 = getText(condition[0]);
+                const text2 = getText(condition[1]);
+                const text3 = getText(condition[2]);
+                
+                if (text1 && text1 === text2 && text2 === text3) {
+                    winner = text1;
+                    // Highlight the winning cells
+                    condition.forEach(cell => cell.style.backgroundColor = '#b980d4'); // Gold highlight
+                    break;
+                }
+            }
+
+            if (winner) {
+                alert(`Game Over! ${winner} wins!`);
+                gameActive = false;
+            } else if (parseInt(x.value) > 9) {
+                alert("Game Over! It's a Draw!");
+                gameActive = false;
+            }
+        }
+
+        function resetGame() {
+            x.value = "1"; 
+            
+            for (let button of allButtons) {
+                button.textContent = ""; 
+                button.style.color = "#2c3e50"; 
+                button.style.backgroundColor = "#1e1e1e"; 
+            }
+
+            gameActive = true;
+        }
+    </script>
+    <script src="../Javascript/DAr ka maahol hai na.js"></script>
+</body>
+</html>

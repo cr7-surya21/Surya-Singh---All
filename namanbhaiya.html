@@ -1,0 +1,1485 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room 3D Visualization</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        font-size: 3em;
+        margin-bottom: 15px;
+        background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header p {
+        font-size: 1.2em;
+        color: #4ecdc4;
+      }
+
+      .canvas-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 600px;
+        border-radius: 15px;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .control-btn {
+        padding: 12px 25px;
+        font-size: 1em;
+        border: 2px solid #4ecdc4;
+        background: rgba(78, 205, 196, 0.2);
+        color: #fff;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: bold;
+      }
+
+      .control-btn:hover {
+        background: rgba(78, 205, 196, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(78, 205, 196, 0.3);
+      }
+
+      .control-btn.active {
+        background: #4ecdc4;
+        color: #000;
+      }
+
+      .info-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .info-card {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 5px solid;
+        transition: transform 0.3s;
+      }
+
+      .info-card:hover {
+        transform: translatex(10px);
+      }
+
+      .info-card.east {
+        border-color: #ffd700;
+      }
+      .info-card.west {
+        border-color: #ff6b6b;
+      }
+      .info-card.north {
+        border-color: #4ecdc4;
+      }
+      .info-card.south {
+        border-color: #a29bfe;
+      }
+      .info-card.vertical {
+        border-color: #fd79a8;
+      }
+
+      .info-card h3 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .info-card p {
+        line-height: 1.8;
+        font-size: 1.05em;
+      }
+
+      .direction-icon {
+        font-size: 1.8em;
+      }
+
+      .floor-plan {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 40px;
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      .floor-plan h2 {
+        font-size: 2em;
+        margin-bottom: 30px;
+        color: #ffd700;
+      }
+
+      .compass {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 15px;
+        border-radius: 50%;
+        border: 3px solid #ffd700;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .compass-text {
+        font-size: 0.9em;
+        font-weight: bold;
+        color: #ffd700;
+      }
+
+      .instructions {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 215, 0, 0.1),
+          rgba(78, 205, 196, 0.1)
+        );
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 30px;
+        border: 2px solid rgba(255, 215, 0, 0.3);
+      }
+
+      .instructions h3 {
+        font-size: 1.6em;
+        margin-bottom: 15px;
+        color: #ffd700;
+      }
+
+      .instructions p {
+        line-height: 1.8;
+        font-size: 1.1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>
+          <span class="home">🏠</span> Your 6-Sided Room Visualization
+          <span class="home">🏠</span>
+        </h1>
+        <p>Interactive 3D Model with Proper Directional Orientation</p>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="roomCanvas"></canvas>
+        <div class="compass">
+          <div class="compass-text">🧭</div>
+          <div class="compass-text">N ↑</div>
+        </div>
+
+        <div class="controls">
+          <button class="control-btn active" onclick="setView('perspective')">
+            🔄 Perspective View
+          </button>
+          <button class="control-btn" onclick="setView('Front')">
+            ⬅ East View (Front)
+          </button>
+          <button class="control-btn" onclick="setView('back')">
+            ➡ West View (Back)
+          </button>
+          <button class="control-btn" onclick="setView('top')">
+            ⬆ Top View
+          </button>
+          <button class="control-btn" onclick="toggleRotation()">
+            ⏯ Auto Rotate
+          </button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="info-card east">
+          <h3><span class="direction-icon">🌅</span> EAST WALL (Front)</h3>
+          <p>
+            <strong>Direction:</strong> Sunrise Side<br />
+            <strong>Features:</strong> Window in the middle of wall<br />
+            <strong>Purpose:</strong> Natural light entrance, ventilation,
+            morning energy
+          </p>
+        </div>
+
+        <div class="info-card west">
+          <h3><span class="direction-icon">🌄</span> WEST WALL (Back)</h3>
+          <p>
+            <strong>Direction:</strong> Sunset Side<br />
+            <strong>Features:</strong> Empty wall<br />
+            <strong>Purpose:</strong> Solid support, evening light, peaceful
+            backing
+          </p>
+        </div>
+
+        <div class="info-card north">
+          <h3><span class="direction-icon">⭐</span> NORTH WALL</h3>
+          <p>
+            <strong>Direction:</strong> Magnetic North<br />
+            <strong>Features:</strong> Empty wall<br />
+            <strong>Purpose:</strong> Positive energy flow, prosperity direction
+            (Vastu)
+          </p>
+        </div>
+
+        <div class="info-card south">
+          <h3><span class="direction-icon">🚪</span> SOUTH WALL</h3>
+          <p>
+            <strong>Direction:</strong> Southern Side<br />
+            <strong>Features:</strong> Door on left corner<br />
+            <strong>Purpose:</strong> Main entrance/exit, air circulation
+          </p>
+        </div>
+
+        <div class="info-card vertical">
+          <h3><span class="direction-icon">↕</span> UP & DOWN</h3>
+          <p>
+            <strong>Ceiling (Up):</strong> Sky connection, cosmic energy<br />
+            <strong>Floor (Down):</strong> Earth connection, grounding
+            stability<br />
+            <strong>Total Sides:</strong> 6 (Complete enclosure)
+          </p>
+        </div>
+      </div>
+
+      <div class="floor-plan">
+        <h2>📐 2D Floor Plan Layout</h2>
+        <svg
+          width="500"
+          height="500"
+          viewBox="0 0 500 500"
+          style="max-width: 100%; height: 100%"
+        >
+          <!-- Room outline -->
+          <!--<rect
+            x="100"
+            y="100"
+            width="300"
+            height="300"
+            fill="rgba(255, 255, 255, 0.1)"
+            stroke="#4ecdc4"
+            stroke-width="3"
+          />
+
+          <!-- Directional labels -->
+          <!--<text
+            x="250"
+            y="80"
+            text-anchor="middle"
+            fill="#ffd700"
+            font-size="20"
+            font-weight="bold"
+          >
+            NORTH ⬆
+          </text>
+          <text
+            x="250"
+            y="440"
+            text-anchor="middle"
+            fill="#a29bfe"
+            font-size="20"
+            font-weight="bold"
+          >
+            SOUTH ⬇
+          </text>
+          <text
+            x="70"
+            y="255"
+            text-anchor="middle"
+            fill="#ff6b6b"
+            font-size="20"
+            font-weight="bold"
+          >
+            WEST ⬅
+          </text>
+          <text
+            x="430"
+            y="255"
+            text-anchor="middle"
+            fill="#ffd700"
+            font-size="20"
+            font-weight="bold"
+          >
+            EAST ➡
+          </text>
+
+          <!-- Window on East wall (middle) -->
+          <!--<rect x="390" y="225" width="10" height="50" fill="#4ecdc4" />
+          <text x="450" y="255" fill="#4ecdc4" font-size="16">Window</text>
+
+          <!-- Door on South wall (left corner) -->
+          <!--<rect x="120" y="390" width="40" height="10" fill="#a29bfe" />
+          <path
+            d="M 120 400 Q 120 370, 150 370"
+            stroke="#a29bfe"
+            stroke-width="2"
+            fill="none"
+          />
+          <text
+            x="140"
+            y="430"
+            text-anchor="middle"
+            fill="#a29bfe"
+            font-size="16"
+          >
+            Door
+          </text>
+
+          <!-- Wall labels -->
+          <!--<text
+            x="250"
+            y="120"
+            text-anchor="middle"
+            fill="#4ecdc4"
+            font-size="14"
+            font-style="italic"
+          >
+            Empty Wall
+          </text>
+          <text
+            x="120"
+            y="255"
+            text-anchor="middle"
+            fill="#ff6b6b"
+            font-size="14"
+            font-style="italic"
+          >
+            Empty Wall
+          </text>
+          <text
+            x="380"
+            y="255"
+            text-anchor="middle"
+            fill="#ffd700"
+            font-size="14"
+          >
+            Front
+          </text>
+
+          <!-- Center marker -->
+          <!--<circle cx="250" cy="250" r="5" fill="#fd79a8" />
+          <text
+            x="250"
+            y="270"
+            text-anchor="middle"
+            fill="#fd79a8"
+            font-size="14"
+          >
+            Center
+          </text>
+        </svg>
+      </div>
+
+      <div class="instructions">
+        <h3>🎮 Interactive Controls:</h3>
+        <p>
+          • <strong>Mouse Drag:</strong> Rotate the room view in 3D space<br />
+          • <strong>Scroll/Pinch:</strong> Zoom in and out<br />
+          • <strong>View Buttons:</strong> Jump to specific directional views<br />
+          • <strong>Auto Rotate:</strong> Automatic 360° rotation for full
+          visualization<br /><br />
+
+          <strong>Room Configuration:</strong><br />
+          Your room is a perfect cube (6 sides) with East-facing window for
+          morning sunlight, South door for easy access, and North-West walls
+          providing solid backing. This layout follows good Vastu principles
+          with natural light from East and entry from South.
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      let scene, camera, renderer, room, controls;
+      let isRotating = true;
+      let currentView = 'perspective';
+
+      function init() {
+          // Scene setup
+          scene = new THREE.Scene();
+          scene.background = new THREE.Color(0x0f2027);
+
+          // Camera
+          camera = new THREE.PerspectiveCamera(75, window.innerWidth / 600, 0.1, 1000);
+          camera.position.set(8, 6, 8);
+          camera.lookAt(0, 0, 0);
+
+          // Renderer
+          const canvas = document.getElementById('roomCanvas');
+          renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+          renderer.setSize(canvas.clientWidth, 600);
+
+          // Lighting
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+          scene.add(ambientLight);
+
+          const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+          directionalLight.position.set(5, 10, 5);
+          scene.add(directionalLight);
+
+          const pointLight = new THREE.PointLight(0x4ecdc4, 0.5);
+          pointLight.position.set(-5, 5, -5);
+          scene.add(pointLight);
+
+          // Create room
+          createRoom();
+
+          // Mouse controls
+          setupMouseControls();
+
+          // Animation
+          animate();
+
+          // Resize handler
+          window.addEventListener('resize', onWindowResize);
+      }
+
+      function createRoom() {
+          room = new THREE.Group();
+
+          // Floor (Down) - Brown
+          const floorGeometry = new THREE.PlaneGeometry(6, 6);
+          const floorMaterial = new THREE.MeshStandardMaterial({
+              color: 0x8b4513,
+              side: THREE.DoubleSide
+          });
+          const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+          floor.rotation.x = -Math.PI / 2;
+          floor.position.y = -3;
+          room.add(floor);
+
+          // Ceiling (Up) - Light gray
+          const ceilingMaterial = new THREE.MeshStandardMaterial({
+              color: 0xcccccc,
+              side: THREE.DoubleSide
+          });
+          const ceiling = new THREE.Mesh(floorGeometry, ceilingMaterial);
+          ceiling.rotation.x = -Math.PI / 2;
+          ceiling.position.y = 3;
+          room.add(ceiling);
+
+          // East Wall (Front) - with window
+          createEastWall();
+
+          // West Wall (Back) - empty
+          const westMaterial = new THREE.MeshStandardMaterial({
+              color: 0xff6b6b,
+              side: THREE.DoubleSide
+          });
+          const westWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), westMaterial);
+          westWall.position.z = -3;
+          room.add(westWall);
+
+          // Add "WEST" text
+          addWallLabel('WEST', -3, 0, -2.9, 0xff6b6b);
+
+          // North Wall (Moon)
+          const northMaterial = new THREE.MeshStandardMaterial({
+              color: 0x4ecdc4,
+              side: THREE.DoubleSide
+          });
+          const northWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), northMaterial);
+          northWall.rotation.y = Math.PI / 2;
+          northWall.position.x = -3;
+          room.add(northWall);
+
+          addWallLabel('NORTH', -2.9, 0, 0, 0x4ecdc4);
+
+          // South Wall (with door)
+          createSouthWall();
+
+          scene.add(room);
+      }
+
+      function createEastWall() {
+          const wallGroup = new THREE.Group();
+
+          // Main wall color - Yellow/Gold for East (sunrise)
+          const wallMaterial = new THREE.MeshStandardMaterial({
+              color: 0xffd700,
+              side: THREE.DoubleSide
+          });
+
+          // Wall parts around window
+          // Bottom part
+          const bottomWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5), wallMaterial);
+          bottomWall.position.y = -2.25;
+          wallGroup.add(bottomWall);
+
+          // Top part
+          const topWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5), wallMaterial);
+          topWall.position.y = 2.25;
+          wallGroup.add(topWall);
+
+          // Left side
+          const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(2, 3), wallMaterial);
+          leftWall.position.x = -2;
+          wallGroup.add(leftWall);
+
+          // Right side
+          const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(2, 3), wallMaterial);
+          rightWall.position.x = 2;
+          wallGroup.add(rightWall);
+
+          // Window frame
+          const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 });
+          const frame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3.2, 0.1), frameMaterial);
+          frame.position.z = 0.05;
+          wallGroup.add(frame);
+
+          // Window glass
+          const glassMaterial = new THREE.MeshStandardMaterial({
+              color: 0x87ceeb,
+              transparent: true,
+              opacity: 0.4,
+              side: THREE.DoubleSide
+          });
+          const glass = new THREE.Mesh(new THREE.PlaneGeometry(2, 3), glassMaterial);
+          glass.position.z = 0.1;
+          wallGroup.add(glass);
+
+          wallGroup.position.z = 3;
+          room.add(wallGroup);
+
+          addWallLabel('EAST\n(Window)', 2.9, 0, 0, 0xffd700);
+      }
+
+      function createSouthWall() {
+          const wallGroup = new THREE.Group();
+          const wallMaterial = new THREE.MeshStandardMaterial({
+              color: 0xa29bfe,
+              side: THREE.DoubleSide
+          });
+
+          // Wall with door cutout on left corner
+          // Right part (main wall)
+          const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(4, 6), wallMaterial);
+          rightWall.position.x = 1;
+          wallGroup.add(rightWall);
+
+          // Top left part above door
+          const topLeftWall = new THREE.Mesh(new THREE.PlaneGeometry(2, 3), wallMaterial);
+          topLeftWall.position.x = -2;
+          topLeftWall.position.y = 1.5;
+          wallGroup.add(topLeftWall);
+
+          // Door frame
+          const doorFrameMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 });
+          const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 0.1), doorFrameMaterial);
+          doorFrame.position.x = -2;
+          doorFrame.position.y = -1.9;
+          doorFrame.position.z = 0.05;
+          wallGroup.add(doorFrame);
+
+          // Door
+          const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+          const door = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 0.08), doorMaterial);
+          door.position.x = -2;
+          door.position.y = -1.9;
+          door.position.z = 0.1;
+          wallGroup.add(door);
+
+          // Door handle
+          const handleMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+          const handle = new THREE.Mesh(new THREE.SphereGeometry(0.08), handleMaterial);
+          handle.position.x = -1.6;
+          handle.position.y = -1.9;
+          handle.position.z = 0.15;
+          wallGroup.add(handle);
+
+          wallGroup.rotation.y = Math.PI / 2;
+          wallGroup.position.x = 3;
+          room.add(wallGroup);
+
+          addWallLabel('SOUTH\n(Door)', 2.9, -1, 0, 0xa29bfe);
+      }
+
+      function addWallLabel(text, x, y, z, color) {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('3d');
+          canvas.width = 256;
+          canvas.height = 128;
+          context.font = 'bold 40px Arial';
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+
+          const lines = text.split('\n');
+          lines.forEach((line, i) => {
+              context.fillText(line, 128, 64 + (i - lines.length/2 + 0.5) * 45);
+          });
+
+          const texture = new THREE.CanvasTexture(canvas);
+          const material = new THREE.MeshBasicMaterial({
+              map: texture,
+              transparent: true,
+              side: THREE.DoubleSide
+          });
+          const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 1), material);
+          mesh.position.set(x, y, z);
+
+          if (Math.abs(x) > 2) {
+              mesh.rotation.y = x > 0 ? -Math.PI / 2 : Math.PI / 2;
+          } else if (Math.abs(z) < 2.5) {
+              mesh.rotation.y = Math.PI;
+          }
+
+          room.add(mesh);
+      }
+
+      let isDragging = false;
+      let previousMousePosition = { x: 0, y: 0 };
+
+      function setupMouseControls() {
+          const canvas = document.getElementById('roomCanvas');
+
+          canvas.addEventListener('mousedown', (e) => {
+              isDragging = true;
+              previousMousePosition = { x: e.clientX, y: e.clientY };
+          });
+
+          canvas.addEventListener('mousemove', (e) => {
+              if (isDragging) {
+                  const deltaX = e.clientX - previousMousePosition.x;
+                  const deltaY = e.clientY - previousMousePosition.y;
+
+                  room.rotation.y += deltaX * 0.01;
+                  room.rotation.x += deltaY * 0.01;
+
+                  room.rotation.x = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, room.rotation.x));
+
+                  previousMousePosition = { x: e.clientX, y: e.clientY };
+              }
+          });
+
+          canvas.addEventListener('mouseup', () => {
+              isDragging = false;
+          });
+
+          canvas.addEventListener('wheel', (e) => {
+              e.preventDefault();
+              camera.position.z += e.deltaY * 0.01;
+              camera.position.z = Math.max(5, Math.min(20, camera.position.z));
+          });
+      }
+
+      function animate() {
+          requestAnimationFrame(animate);
+
+          if (isRotating && currentView === 'perspective') {
+              room.rotation.y += 0.005;
+          }
+
+          renderer.render(scene, camera);
+      }
+
+      function setView(view) {
+          currentView = view;
+
+          // Remove active class from all buttons
+          document.querySelectorAll('.control-btn').forEach(btn => {
+              btn.classList.remove('active');
+          });
+
+          // Add active class to clicked button
+          event.target.classList.add('active');
+
+          room.rotation.set(0, 0, 0);
+
+          switch(view) {
+              case 'front': // East view
+                  camera.position.set(10, 0, 0);
+                  camera.lookAt(0, 0, 0);
+                  isRotating = false;
+                  break;
+              case 'back': // West view
+                  camera.position.set(-10, 0, 0);
+                  camera.lookAt(0, 0, 0);
+                  isRotating = false;
+                  break;
+              case 'top':
+                  camera.position.set(0, 12, 0);
+                  camera.lookAt(0, 0, 0);
+                  isRotating = false;
+                  break;
+              case 'perspective':
+                  camera.position.set(8, 6, 8);
+                  camera.lookAt(0, 0, 0);
+                  break;
+          }
+      }
+
+      function toggleRotation() {
+          isRotating = !isRotating;
+          event.target.textContent = isRotating ? '⏸ Pause Rotate' : '▶ Start Rotate';
+      }
+
+      function onWindowResize() {
+          const canvas = document.getElementById('roomCanvas');
+          camera.aspect = canvas.clientWidth / 600;
+          camera.updateProjectionMatrix();
+          renderer.setSize(canvas.clientWidth, 600);
+      }
+
+      // Initialize on load
+      init();
+    </script> -->
+    <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Animation Key Notes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #ffd700;
+        }
+        
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .nav-btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .section-title {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .principle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .principle-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid;
+            transition: all 0.3s;
+        }
+        
+        .principle-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .principle-card h3 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .principle-card p {
+            font-size: 1.05em;
+            line-height: 1.7;
+        }
+        
+        .principle-card.p1 { border-color: #ff6b6b; }
+        .principle-card.p2 { border-color: #4ecdc4; }
+        .principle-card.p3 { border-color: #ffd700; }
+        .principle-card.p4 { border-color: #a29bfe; }
+        .principle-card.p5 { border-color: #fd79a8; }
+        .principle-card.p6 { border-color: #00d2d3; }
+        
+        .workflow-steps {
+            counter-reset: step-counter;
+            margin-top: 30px;
+        }
+        
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            position: relative;
+            padding-left: 100px;
+        }
+        
+        .workflow-step::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .workflow-step h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .workflow-step p {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .tool-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tool-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card h4 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(253, 121, 168, 0.2));
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            margin-top: 30px;
+        }
+        
+        .tip-box h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tip-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .tip-box li {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .tip-box li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+        
+        .demo-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .animation-demo {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .bounce-ball {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .bounce-ball::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            animation: shadowPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                bottom: 20px;
+                animation-timing-function: ease-in;
+            }
+            50% {
+                bottom: 220px;
+                animation-timing-function: ease-out;
+            }
+        }
+        
+        @keyframes shadowPulse {
+            0%, 100% {
+                width: 70px;
+                opacity: 0.7;
+            }
+            50% {
+                width: 40px;
+                opacity: 0.3;
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .comparison-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th {
+            background: rgba(255, 215, 0, 0.3);
+            padding: 15px;
+            font-size: 1.2em;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .section {
+                padding: 25px;
+            }
+            
+            .workflow-step {
+                padding-left: 20px;
+                padding-top: 70px;
+            }
+            
+            .workflow-step::before {
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 2D ANIMATION KEY NOTES 🎨</h1>
+            <p class="subtitle">Complete Guide to Mastering 2D Animation</p>
+        </div>
+        
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="scrollToSection('principles')">12 Principles</button>
+            <button class="nav-btn" onclick="scrollToSection('workflow')">Workflow</button>
+            <button class="nav-btn" onclick="scrollToSection('techniques')">Techniques</button>
+            <button class="nav-btn" onclick="scrollToSection('tools')">Tools</button>
+            <button class="nav-btn" onclick="scrollToSection('tips')">Pro Tips</button>
+        </div>
+        
+        <!-- 12 Principles of Animation -->
+        <!--<div class="section" id="principles">
+            <h2 class="section-title">🎯 The 12 Principles of Animation</h2>
+            <p style="font-size: 1.15em; margin-bottom: 20px;">Developed by Disney animators Ollie Johnston and Frank Thomas, these are the fundamental laws of animation.</p>
+            
+            <div class="principle-grid">
+                <div class="principle-card p1">
+                    <h3>1️⃣ Squash & Stretch</h3>
+                    <p><strong>Purpose:</strong> Creates illusion of weight, flexibility, and life.<br><br>
+                    <strong>How:</strong> Objects deform during motion - squash when impacting, stretch when moving fast. Maintain volume!</p>
+                </div>
+                
+                <div class="principle-card p2">
+                    <h3>2️⃣ Anticipation</h3>
+                    <p><strong>Purpose:</strong> Prepares audience for action.<br><br>
+                    <strong>How:</strong> Before jumping up, character crouches down. Before running right, lean left. Creates expectation and realism.</p>
+                </div>
+                
+                <div class="principle-card p3">
+                    <h3>3️⃣ Staging</h3>
+                    <p><strong>Purpose:</strong> Direct audience attention to the important action.<br><br>
+                    <strong>How:</strong> Clear silhouettes, proper camera angles, lighting, and composition. One main action at a time.</p>
+                </div>
+                
+                <div class="principle-card p4">
+                    <h3>4️⃣ Straight Ahead & Pose to Pose</h3>
+                    <p><strong>Straight Ahead:</strong> Draw frame by frame from start to end. Fluid, spontaneous.<br><br>
+                    <strong>Pose to Pose:</strong> Draw key poses first, then fill in-betweens. More controlled, planned.</p>
+                </div>
+                
+                <div class="principle-card p5">
+                    <h3>5️⃣ Follow Through & Overlapping</h3>
+                    <p><strong>Purpose:</strong> Creates realistic movement with drag and momentum.<br><br>
+                    <strong>How:</strong> Hair, clothes, tails continue moving after body stops. Different parts move at different rates.</p>
+                </div>
+                
+                <div class="principle-card p6">
+                    <h3>6️⃣ Slow In & Slow Out</h3>
+                    <p><strong>Purpose:</strong> Natural acceleration/deceleration.<br><br>
+                    <strong>How:</strong> More drawings near start/end of action, fewer in middle. Objects don't instantly reach full speed.</p>
+                </div>
+                
+                <div class="principle-card p1">
+                    <h3>7️⃣ Arcs</h3>
+                    <p><strong>Purpose:</strong> Natural, smooth motion paths.<br><br>
+                    <strong>How:</strong> Most actions follow curved paths (arcs), not straight lines. Arms swing in arcs, heads turn in arcs.</p>
+                </div>
+                
+                <div class="principle-card p2">
+                    <h3>8️⃣ Secondary Action</h3>
+                    <p><strong>Purpose:</strong> Adds dimension and richness.<br><br>
+                    <strong>How:</strong> Supporting actions that enhance main action - facial expressions during walk, hand gestures during talk.</p>
+                </div>
+                
+                <div class="principle-card p3">
+                    <h3>9️⃣ Timing</h3>
+                    <p><strong>Purpose:</strong> Determines weight, mood, emotion.<br><br>
+                    <strong>How:</strong> Number of frames between poses. Fast timing = light/comedic. Slow timing = heavy/dramatic.</p>
+                </div>
+                
+                <div class="principle-card p4">
+                    <h3>🔟 Exaggeration</h3>
+                    <p><strong>Purpose:</strong> Makes animation more entertaining and clear.<br><br>
+                    <strong>How:</strong> Push poses, expressions, actions beyond reality. Not too realistic = boring. Too much = cartoon.</p>
+                </div>
+                
+                <div class="principle-card p5">
+                    <h3>1️⃣1️⃣ Solid Drawing</h3>
+                    <p><strong>Purpose:</strong> Creates believable 3D forms on 2D surface.<br><br>
+                    <strong>How:</strong> Understanding volume, weight, balance, anatomy. Avoid "twins" (symmetrical poses), maintain model consistency.</p>
+                </div>
+                
+                <div class="principle-card p6">
+                    <h3>1️⃣2️⃣ Appeal</h3>
+                    <p><strong>Purpose:</strong> Makes characters engaging and memorable.<br><br>
+                    <strong>How:</strong> Clear design, personality, charm. Applies to heroes AND villains. Easy to read, interesting to watch.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animation Workflow -->
+        <!--<div class="section" id="workflow">
+            <h2 class="section-title">🔄 2D Animation Workflow</h2>
+            
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <h3>Pre-Production</h3>
+                    <p><strong>Story & Script:</strong> Write narrative, dialogue, action sequences.<br>
+                    <strong>Storyboard:</strong> Visual blueprint - rough sketches showing camera angles, action, timing.<br>
+                    <strong>Character Design:</strong> Create model sheets with multiple angles, expressions.<br>
+                    <strong>Animatic:</strong> Timed storyboard with temp audio to test pacing.</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>Layout & Rough Animation</h3>
+                    <p><strong>Layout:</strong> Establish backgrounds, camera positions, character placements.<br>
+                    <strong>Key Frames:</strong> Draw major poses that define the action (extremes).<br>
+                    <strong>Breakdown Frames:</strong> Critical in-between poses that define the path.<br>
+                    <strong>Timing Charts:</strong> Mark spacing between frames for proper motion.</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>In-Between Animation</h3>
+                    <p><strong>In-Betweening (Tweening):</strong> Fill frames between key poses.<br>
+                    <strong>Maintain Volume:</strong> Keep character proportions consistent.<br>
+                    <strong>Check Arcs:</strong> Ensure smooth motion paths using onion skinning.<br>
+                    <strong>Frame Rate:</strong> Typically 24fps (ones), 12fps (twos), or 8fps (threes).</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>Clean-Up & Line Art</h3>
+                    <p><strong>Rough Clean-Up:</strong> Refine rough animation, fix proportions.<br>
+                    <strong>Final Line Art:</strong> Create clean, finished outlines with consistent line weight.<br>
+                    <strong>Line Test:</strong> Check animation flow before coloring.<br>
+                    <strong>Quality Check:</strong> Fix timing issues, registration problems.</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>Coloring & Painting</h3>
+                    <p><strong>Color Keys:</strong> Establish color palette and lighting mood.<br>
+                    <strong>Flat Colors:</strong> Fill base colors within line art.<br>
+                    <strong>Shading:</strong> Add shadows, highlights for depth (cel shading or gradient).<br>
+                    <strong>Background Art:</strong> Create detailed environments.</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>Compositing & Effects</h3>
+                    <p><strong>Layering:</strong> Combine character animation with backgrounds.<br>
+                    <strong>Camera Moves:</strong> Add pans, zooms, rotations.<br>
+                    <strong>Visual Effects:</strong> Fire, smoke, water, magic, lighting effects.<br>
+                    <strong>Particle Systems:</strong> Dust, sparkles, rain, snow.</p>
+                </div>
+                
+                <div class="workflow-step">
+                    <h3>Post-Production</h3>
+                    <p><strong>Sound Design:</strong> Add dialogue, sound effects, foley.<br>
+                    <strong>Music:</strong> Compose or select soundtrack.<br>
+                    <strong>Color Grading:</strong> Final color correction and mood adjustment.<br>
+                    <strong>Export:</strong> Render final video in desired format and resolution.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animation Techniques -->
+        <!--<div class="section" id="techniques">
+            <h2 class="section-title">🎨 Key Animation Techniques</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Technique</th>
+                        <th>Description</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Frame-by-Frame</strong></td>
+                        <td>Drawing every single frame manually</td>
+                        <td>Complex movements, character animation, fluid motion</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cel Animation</strong></td>
+                        <td>Traditional method using transparent sheets</td>
+                        <td>Classic Disney-style animation, TV shows</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cut-Out Animation</strong></td>
+                        <td>Moving pre-drawn pieces (puppet-style)</td>
+                        <td>South Park style, limited animation, fast production</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rotoscoping</strong></td>
+                        <td>Tracing over live-action footage</td>
+                        <td>Realistic human movement, reference for complex actions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Motion Graphics</strong></td>
+                        <td>Animating graphic elements, text, shapes</td>
+                        <td>Explainer videos, title sequences, UI animation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rigging</strong></td>
+                        <td>Creating bone structure for puppet animation</td>
+                        <td>TV series, games, efficient production pipelines</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="tip-box" style="margin-top: 30px;">
+                <h3>📐 Important Concepts</h3>
+                <ul>
+                    <li><strong>Onion Skinning:</strong> Seeing previous/next frames as ghost images for smooth transitions</li>
+                    <li><strong>Keyframes:</strong> Main poses that define the start and end of movements</li>
+                    <li><strong>Tweening:</strong> Filling the frames between keyframes (in-betweening)</li>
+                    <li><strong>Easing:</strong> Gradual acceleration/deceleration (ease-in, ease-out)</li>
+                    <li><strong>FPS (Frames Per Second):</strong> Standard is 24fps; can animate on 2s (12fps) or 3s (8fps) to save time</li>
+                    <li><strong>Holds:</strong> Keeping a pose static for multiple frames for emphasis</li>
+                    <li><strong>Smear Frames:</strong> Distorted in-between frames at high speed (motion blur effect)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Tools & Software -->
+        <!--<div class="section" id="tools">
+            <h2 class="section-title">🛠 2D Animation Tools & Software</h2>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🎨</div>
+                    <h4>Adobe Animate</h4>
+                    <p>Industry standard for vector animation, great for web/mobile content</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🖌</div>
+                    <h4>Toon Boom Harmony</h4>
+                    <p>Professional-grade, used in film/TV studios, rigging & frame-by-frame</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">✏</div>
+                    <h4>TVPaint</h4>
+                    <p>Digital frame-by-frame animation, mimics traditional techniques</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🎬</div>
+                    <h4>Adobe After Effects</h4>
+                    <p>Motion graphics, compositing, visual effects, puppet rigging</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🆓</div>
+                    <h4>Krita</h4>
+                    <p>Free, open-source painting software with animation tools</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🎯</div>
+                    <h4>Blender (Grease Pencil)</h4>
+                    <p>Free 2D animation in 3D space, powerful and versatile</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">📱</div>
+                    <h4>FlipaClip</h4>
+                    <p>Mobile animation app, great for beginners and sketching</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🖼</div>
+                    <h4>Procreate Dreams</h4>
+                    <p>iPad animation with timeline-based workflow and touch controls</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">🎪</div>
+                    <h4>OpenToonz</h4>
+                    <p>Free professional software used by Studio Ghibli</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animation Demo -->
+        <!--<div class="section">
+            <h2 class="section-title">🏀 Live Animation Demo</h2>
+            <p style="text-align: center; font-size: 1.15em; margin-bottom: 20px;">
+                Example of Squash & Stretch principle with Timing and Arcs
+            </p>
+            
+            <div class="demo-container">
+                <div class="animation-demo">
+                    <div class="bounce-ball"></div>
+                </div>
+                <p style="margin-top: 20px; font-size: 1.1em;">
+                    Notice how the ball stretches when moving fast, squashes on impact, and follows a curved arc path!
+                </p>
+            </div>
+        </div>
+        
+        <!-- Pro Tips -->
+        <!--<div class="section" id="tips">
+            <h2 class="section-title">💡 Professional Tips & Best Practices</h2>
+            
+            <div class="tip-box">
+                <h3>✨ Essential Tips for Beginners</h3>
+                <ul>
+                    <li><strong>Start Simple:</strong> Begin with bouncing balls, flour sacks before attempting characters</li>
+                    <li><strong>Study Real Motion:</strong> Record yourself or others performing actions as reference</li>
+                    <li><strong>Use Reference Videos:</strong> Analyze frame-by-frame how things actually move</li>
+                    <li><strong>Plan Before Animating:</strong> Thumbnails and rough sketches save massive time</li>
+                    <li><strong>Work in Layers:</strong> Separate foreground, midground, background for flexibility</li>
+                    <li><strong>Keep Model Sheets Handy:</strong> Maintain consistent character proportions</li>
+                    <li><strong>Animate Big to Small:</strong> Start with main body motion, then add details</li>
+                    <li><strong>Test Constantly:</strong> Playback animation frequently to check flow</li>
+                </ul>
+            </div>
+            
+            <div class="tip-box">
+                <h3>⚡ Speed Up Your Workflow</h3>
+                <ul>
+                    <li><strong>Use Cycles:</strong> Loop animations for walks, runs, background elements</li>
+                    <li><strong>Reuse Assets:</strong> Build a library of backgrounds, props, effects</li>
+                    <li><strong>Master Shortcuts:</strong> Learn keyboard shortcuts for your software</li>
+                    <li><strong>Animate on 2s or 3s:</strong> Don't always need full 24fps for smooth motion</li>
+                    <li><strong>Use Symbols/Libraries:</strong> Reuse character parts across frames</li>
+                    <li><strong>Work Smarter with Holds:</strong> Static frames between actions save time</li>
+                </ul>
+            </div>
+            
+            <div class="tip-box">
+                <h3>🎯 Common Mistakes to Avoid</h3>
+                <ul>
+                    <li><strong>Twinning:</strong> Symmetrical poses look stiff - always offset arms/legs</li>
+                    <li><strong>Even Spacing:</strong> Creates robotic motion - vary frame spacing for natural feel</li>
+                    <li><strong>Floating:</strong> Characters need weight - add squash, ground contact, shadows</li>
+                    <li><strong>Too Much Detail Too Soon:</strong> Animate rough first, clean up later</li>
+                    <li><strong>Ignoring Silhouettes:</strong> Test poses in black - should read clearly</li>
+                    <li><strong>No Anticipation:</strong> Actions feel sudden - always prepare audience</li>
+                    <li>
+  </body>
+</html> -->
