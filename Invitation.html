@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎉 Surya’s Birthday Invitation 🎉</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fff3e0, #ffe0f0);
+      color: #2b2b2b;
+      text-align: center;
+      padding: 40px;
+      overflow-x: hidden;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 35px;
+      max-width: 550px;
+      margin: auto;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      animation: fadeIn 1s ease;
+      position: relative;
+      z-index: 2;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.00);}
+      to {opacity: 1; transform: scale(1);}
+    }
+    h1 {
+      color: #ff6b6b;
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      font-size: 1.3em;
+      margin-bottom: 20px;
+    }
+    .info {
+      margin: 12px 0;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .emoji {
+      font-size: 48px;
+      margin-bottom: 10px;
+      animation: bounce 1.5s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #ffc27a, #ff8787);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      margin: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #ff8787, #ffc27a);
+    }
+    .btn:active {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #ff8787, #ffc27a);
+    }
+    footer {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #555;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="card">
+    <div class="emoji">🎂🎉🎈</div>
+    <h1>You're Invited!</h1>
+    <h2>To <b>Surya Singh’s 14th Birthday Bash!</b></h2>
+
+    <p class="info">📅 <b>Date:</b> 15th November 2025 (Saturday)</p>
+    <p class="info">⏰ <b>Time:</b> 6:30 PM – 9:30 PM</p>
+    <p class="info">📍 <b>Venue:</b> Surya’s Home, Vishwanath Nagar Colony, Dafi, Varanasi</p>
+    <p class="info">🎁 <b>Theme:</b> Fun, Games, Laughter, and Cake!</p>
+
+    <p class="info">Join us for an evening full of joy, laughter, and delicious treats! 😋</p>
+
+    <a class="btn" id="rsvpBtn">Confirm Now</a>
+    <a class="btn" id="copyLinkBtn">Copy Invite Link 🔗</a>
+    <a class="btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Surya%27s+Birthday+Party&dates=20251115T183000/20251115T213000&details=Join+us+for+Surya%27s+Birthday+Party!&location=Vishwanath+Nagar+Colony,+Dafi,+Varanasi" target="_blank">Add to Calendar</a>
+
+    <footer>
+      Made with ❤️ by <b>Surya</b> for Himself — Turning 14! 🥳
+    </footer>
+  </div>
+
+  <script>
+    // 🎉 CONFETTI EFFECT
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let confettiPieces = [];
+    let W, H;
+    function resizeCanvas() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function randomColor() {
+      const colors = ['#ff6b6b', '#ffb86b', '#feca57', '#48dbfb', '#1dd1a1'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createConfetti() {
+      for (let i = 0; i < 100; i++) {
+        confettiPieces.push({
+          x: Math.random() * W,
+          y: Math.random() * H - H,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 20 + 10,
+          color: randomColor(),
+          tilt: Math.random() * 10 - 10
+        });
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, W, H);
+      confettiPieces.forEach(p => {
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.r, p.r);
+      });
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      confettiPieces.forEach(p => {
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.x += Math.sin(p.d);
+        if (p.y > H) {
+          p.y = -10;
+          p.x = Math.random() * W;
+        }
+      });
+    }
+
+    createConfetti();
+    setInterval(drawConfetti, 30);
+
+    // 🎂 RSVP BUTTON (Now sends email confirmation)
+    document.getElementById('rsvpBtn').addEventListener('click', () => {
+      alert('🎉 Thanks for confirming! Redirecting to Gmail...');
+      window.location.href = "mailto:sainikschoolrmspreparation@gmail.com?subject=RSVP%20Confirmation&body=Hey%20Surya!%20I%20confirm%20my%20attendance%20for%20your%20birthday%20party%20🥳";
+    });
+
+    // 🔗 COPY INVITE LINK
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      const link = 'https://surya-birthday.netlify.app';
+      navigator.clipboard.writeText(link).then(() => {
+        alert('🔗 Invite link copied: ' + link);
+      });
+    });
+  </script>
+</body>
+</html>
+
